@@ -1,6 +1,23 @@
 import sys
 import ipaddress
+import socket
+def help_menu():
+    print("="*50)
+    print("-n -> Scaneza care hosturi sunt up sau down.")
+    print("-p -> Portul la care este transmise datele.")
 
+def scan_port(ip):
+    try:
+        scan_port = lambda port: socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect_ex((ip,port)) == 0
+        port_to_scan = range(1, 100)
+        result = list(map(scan_port, port_to_scan))
+        for port, result  in zip(port_to_scan):
+            if result:
+                print(f"Portul {port} este deschis.")
+            else:
+                print(f"Portul {port} este inchis")
+    except ZeroDivisionError:
+        print("Nu se poate împărți la zero.")
 def is_valid_ip(ip_str):
     try:
         ipaddress.IPv4Address(ip_str)  # Încearcă să parseze șirul ca o adresă IPv4
@@ -43,4 +60,8 @@ def scan_networ(ip_input, subnet_mask_input):
 if __name__ == "__main__":
     if "-n" in sys.argv:
         scan_networ(sys.argv[sys.argv.index("-n") + 1], sys.argv[sys.argv.index("-n") + 2])
+    elif "-h" in sys.argv or "--help" in sys.argv:
+        help_menu()
+    elif "-i" in sys.argv:
+        scan_port(str(sys.argv.index("-i")+1))
     # print(sys.argv[1])
